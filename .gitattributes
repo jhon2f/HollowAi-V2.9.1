@@ -1,0 +1,11 @@
+* text=auto
+
+*.pyd   binary
+*.exe   binary
+*.onnx  binary
+*.elf   binary
+*.das   binary
+*.dll   binary
+*.pyc   binary
+
+*.bat   text eol=crlf

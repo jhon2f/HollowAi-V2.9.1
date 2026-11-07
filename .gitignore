@@ -1,0 +1,16 @@
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+
+# Runtime secrets / state written by the app
+holo.key
+key.file
+*.log
+kl.log
+
+# Local editor / OS noise
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

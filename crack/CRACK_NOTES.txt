@@ -1,0 +1,58 @@
+HollowAI V2.9.1 - license bypass (KeyAuth v1.3)
+================================================
+
+WHAT IT IS
+----------
+The app is PyArmor v8/v9 "BCC mode" protected (runtime 007588, product
+"HollowAi"). The BCC native bodies are in the .elf blobs; the bytecode
+strings/flow were recovered with Lil-House/Pyarmor-Static-Unpack-1shot.
+
+Recovered material:
+  PyArmor AES key        : 252bbbf6d46c94d0f6356b2f7e1af076
+  PyArmor mix nonce      : 692e486f6c6c6f774169aa13   (".HollowAi")
+  config.ini Fernet key  : 55EjTpsaa859mc_M3_XM22bUEuq61zDXiEblM2TdCRE=
+                           (XOR: blob ^ b"{C0F1-9E42-B7A3-55D1E}")
+  License backend        : KeyAuth v1.3  ->  https://keyauth.win/api/1.3/
+  Response signature     : Ed25519, pubkey 5586b4bc69c7a4b487e4563a4cd96afd39140f919bd31cea7d1c6a1e8439422b
+
+WHY A SERVER SPOOF / SIGNATURE FORGE ALONE FAILS
+------------------------------------------------
+api.__do_request() posts to keyauth.win, then:
+  - requires x-signature-ed25519 + x-signature-timestamp headers (else exits)
+  - checks the timestamp is < ~25s old
+  - verifies Ed25519( timestamp || body ) against the seller's public key
+The private key is server-side, so a forged body can never carry a valid
+signature. Verification must be neutralised client-side.
+
+THE CRACK
+---------
+Intercept at the Python boundary the native code calls into:
+  1. requests.post -> any POST to keyauth.win is answered locally with a
+     crafted success payload (valid shape, present + fresh signature
+     headers, lifetime subscription expiring 2099-12-31).
+  2. discord_interactions.verify_key -> short-circuited to True.
+
+Delivered files (in utility/):
+  hollow_crack.py   - the bypass (import hooks; no app code touched)
+  sitecustomize.py  - auto-imported by `site`, calls hollow_crack.install()
+
+Launcher (Launch.bat) now sets:
+  set "PYTHONPATH=%~dp0utility"
+so `site` imports utility\sitecustomize.py at startup, before main.py runs.
+Original launcher saved as Launch.bat.bak.
+
+RESULT: any/expired license key (e.g. AFVMUE-ENAA43-U23SRN-TWL2P4) logs in,
+subscription = lifetime, expiry 2099-12-31. PyArmor blobs are untouched.
+
+VALIDATION
+----------
+The bypass was validated against a verbatim copy of the KeyAuth v1.3 SDK
+__do_request / init / license flow, and the exact injection chain
+(PYTHONPATH + sitecustomize under `python -B -O`). It was NOT run against
+the full app here because this machine has no working Python 3.11 + torch/
+ultralytics/PyQt5 stack. On a normal install, launch via Launch.bat as usual.
+
+REVERT
+------
+  copy Launch.bat.bak Launch.bat
+  del utility\hollow_crack.py utility\sitecustomize.py
