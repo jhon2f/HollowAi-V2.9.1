@@ -172,8 +172,9 @@ interception layer.
 
 ## Integrity
 
-- `app/` is byte-for-byte the delivered build, except `Launch.bat`, which is restored from
-  `Launch.bat.bak` (the pre-crack original, no `PYTHONPATH` line).
+- The build tree at the repo root is the delivered app with the bypass installed
+  (`utility/hollow_crack.py`, `utility/sitecustomize.py`, and the cracked `Launch.bat`).
+  The original launcher is kept at `crack/Launch.bat.bak`.
 - `crack/` is the delivered bypass, unmodified.
 - `decompiled/` is the static recovery output, unmodified.
 - `__pycache__` directories are runtime artifacts and are excluded.
@@ -186,6 +187,6 @@ interception layer.
 - Static only. The full app wasn't run here, there's no Python 3.11 + torch/ultralytics/PyQt5
   stack on this machine.
 - BCC bodies are native. The recovered Python is partial by construction.
-- The app's own behaviour (kernel driver, hidden key file, telemetry) is unchanged in `app/`.
+- The app's own behaviour (kernel driver, hidden key file, telemetry) is unchanged in the build tree.
 - Public hosting of cracked commercial cheat software invites GitHub ToS or DMCA action and
   account takedown. Private is the safer default.

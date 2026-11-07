@@ -1,6 +1,6 @@
 # HollowAi V2.9.1
 
-Neural-network aimbot for Fortnite and Apex. License check removed - no key, no account, no hardware board. It just runs. Cracked by sassymemelol.
+Neural-network aimbot for Fortnite and Apex. License check removed - no key, no account, no hardware board. Download, extract, run `Launch.bat`. That's it. Cracked by sassymemelol.
 
 ---
 
@@ -10,7 +10,7 @@ HollowAi is a YOLO-based aimbot. It grabs the screen with DX CAM or DXGI Desktop
 
 The original build won't start without a KeyAuth license, and it also runs a Protector watchdog plus launch telemetry. This build answers all of that on the machine. The PyArmor blobs are untouched - the bypass is a Python import hook and nothing else.
 
-The repo ships three things: the app as delivered, the bypass, and the recovered source from the static unpack. You combine app/ and crack/ to get a working build.
+The bypass is already installed in this tree. `utility/hollow_crack.py` and `utility/sitecustomize.py` are in place, and `Launch.bat` sets `PYTHONPATH` so it loads before the app. Nothing to move around.
 
 ## Features
 
@@ -37,18 +37,19 @@ Drop any `.engine`, `.pt` or `.onnx` into `models/` and it shows up in the AI Mo
 ## Requirements
 
 - Windows 10 or 11 (64-bit)
-- Python 3.11
+- Python 3.11 - `Launch.bat` installs it for you if it's missing
 - NVIDIA GPU recommended (TensorRT / CUDA). onnxruntime-directml works on other GPUs.
 - Admin - the launcher self-elevates
 
 ## Install
 
-1. Clone or download the repo.
-2. Copy `crack/hollow_crack.py` and `crack/sitecustomize.py` into `app/utility/`.
-3. Replace `app/Launch.bat` with `crack/Launch.bat`.
-4. Run `Launch.bat` as administrator.
+1. Download the repo - green **Code** button, **Download ZIP**.
+2. Extract it anywhere. Keep the folder contents together.
+3. Run `Launch.bat` as administrator.
 
-First run installs Python 3.11 through the bundled `pyins.exe` if it's missing. If the auto-install stalls or loops, run `app/tools/Manual Installer.bat` - it has the full pip list pinned (torch 2.7.1 cu128, ultralytics 8.3.222, tensorrt, PyQt5, pywin32, and the rest).
+That's the whole install. First run installs Python 3.11 through the bundled `pyins.exe` if it's missing, then the app pulls its dependencies on first boot. If the auto-install stalls or loops, run `tools/Manual Installer.bat` - it has the full pip list pinned (torch 2.7.1 cu128, ultralytics 8.3.222, tensorrt, PyQt5, pywin32, and the rest).
+
+Do not run `utility/main.py` directly. Always start with `Launch.bat`, or the bypass won't load.
 
 ## Run
 
@@ -63,13 +64,12 @@ License shows lifetime. Any key works, and it never expires.
 
 | Path | What it is |
 | --- | --- |
-| `app/` | shipped build with the original launcher |
-| `app/utility/` | PyArmor-obfuscated main.py, client.py, core/* |
-| `app/models/` | apex legends.onnx, universal.onnx |
-| `app/tools/` | installer, TensorRT fix, CPU fallback, Python cleanup |
-| `crack/hollow_crack.py` | the import hook |
-| `crack/sitecustomize.py` | auto-installs it at startup |
-| `crack/Launch.bat` | launcher with PYTHONPATH set |
+| `Launch.bat` | launcher - starts the app with the bypass active |
+| `utility/` | PyArmor-obfuscated main.py, client.py, core/*, plus the bypass |
+| `models/` | apex legends.onnx, universal.onnx |
+| `tools/` | installer, TensorRT fix, CPU fallback, Python cleanup |
+| `input/` | placeholder, guides moved to the dashboard |
+| `crack/` | the bypass source and the cracker's notes, for reference |
 | `decompiled/` | recovered source skeleton, raw disasm, BCC natives |
 | `audit/AUDIT.md` | full teardown |
 | `audit/MANIFEST.sha256` | hash of every file |
@@ -87,6 +87,8 @@ The app is PyArmor v8/v9 in BCC mode, so most function bodies are native and the
 
 The KeyAuth private key is server-side, so a forged body can never carry a real signature. The check has to be neutralised client-side, and `verify_key` is where that happens. The blobs stay byte-for-byte as shipped.
 
+The source is in `crack/` if you want to read it. It's already wired in - don't copy anything else over.
+
 ## Troubleshooting
 
 | Problem | Fix |
@@ -98,6 +100,7 @@ The KeyAuth private key is server-side, so a forged body can never carry a real 
 | ONNX silently falls back to CPU | Run `tools/Install ONNX GPU Support.bat` |
 | Aim not moving | Wrong input method - pick Default Win32 if you have no hardware |
 | No capture | Run the game borderless, not exclusive fullscreen |
+| Key screen won't pass | Start with `Launch.bat`, not `main.py` directly |
 
 ## Decompiled source
 

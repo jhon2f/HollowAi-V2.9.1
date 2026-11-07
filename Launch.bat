@@ -65,6 +65,7 @@ goto startApp
 tasklist /FI "IMAGENAME eq python.exe" | find /I "python.exe" >nul
 if %errorlevel%==0 taskkill /F /IM python.exe >nul 2>&1
 
+set "PYTHONPATH=%~dp0utility"
 python -B -O utility\main.py
 timeout /t 1 >nul
 pause
